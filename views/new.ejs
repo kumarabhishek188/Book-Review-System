@@ -1,0 +1,39 @@
+<%- include('./partials/header.ejs') %>
+
+    <div class="new-review">
+        <form action="/new" method="post">
+            <fieldset id="fieldset">
+                <legend>Add New Review</legend>
+
+                <div class="title-rating">
+                    <label class="title-box" for="title1">Title
+                        <input id="title1" type="text" name="title" placeholder="Book Title">
+                    </label>
+
+                    <label class="rating-box" for="rating1">Rating
+                        <input required id="rating1" type="number" min="1" max="5" name="rating">
+                    </label>
+                </div>
+
+                <textarea class="edit-textarea" name="review" cols="30" rows="10" placeholder="Write review here"></textarea>
+
+                <div class="form-others">
+                    <label for="isbn1">ISBN
+                        <input id="isbn1" type="text" name="isbn" placeholder="ISBN" required>
+                    </label>
+
+                    <label for="genre1">Genre
+                        <input id="genre1" type="text" name="genre" placeholder="Genre">
+                    </label>
+
+                    <label for="author1">Author
+                        <input id="author1" type="text" name="author" placeholder="Author" required>
+                    </label>
+
+                </div>
+                <input class="edit-button" type="submit" id="button" value="Submit">
+            </fieldset>
+        </form>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>

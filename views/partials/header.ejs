@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reviews</title>
+    <link rel="stylesheet" href="/style/styles.css">
+    <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <div class="menu">
+            <a href="/"><img class="logo" src="/assets/thynk-book-logo.png" alt="Logo"></a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/new-review">Review a Book</a></li>
+            </ul>
+        </div>
+
+        <div class="search">
+            <form action="/s" method="post" id="search-form">
+                <input type="search" required name="search" value="<%= locals.searchTerm %>" id="search-input" placeholder="Search"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                  </svg></form>
+
+            <form action="/sort" method="post" id="sort-form">
+               <select onchange="submitForm()" name="sort" id="sort-select">
+                    <option value="" disabled selected>Sort by</option>
+                    <option value="Name (A-Z)">Name (A-Z)</option>
+                    <option value="Rating ★">Rating</option>
+                </select> 
+            </form>
+            
+            <form action="/genre" method="post" id="genre-form">
+                <select onchange="submitForm()" name="genre" id="genre-select">
+                    <option value="" disabled selected>Genre</option>
+                    <option value="fiction">Fiction</option>
+                    <option value="non-fiction">Non-Fiction</option>
+                    <option value="auto-biography">Auto-biography</option>
+                    <option value="self-help">Self-help</option>
+                </select>  
+            </form>
+            
+        </div>
+    </header>

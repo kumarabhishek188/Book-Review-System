@@ -1,0 +1,77 @@
+<%- include('./partials/header.ejs') %>
+
+<section class="container2">
+    <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="">
+    <div class="book-detail">
+        <div class="bd-div">
+            <span class="tag-isbn">
+                ISBN: <%= book.isbn %>
+            </span> 
+            <span class="tag-genre">
+                <a style="color: white; text-decoration: none;" id="genre-tag" href="#">
+                    <%= book.genre %>
+                </a>
+            </span>
+        </div>
+
+        <!-- Hidden form to send POST request for the Book Genre Tag -->
+        <form id="tag-form" action="/genre" method="POST" style="display:none;">
+            <input type="hidden" name="genreTag" value="<%= book.genre %>">
+        </form>
+
+        <h2><%= book.title %></h2>
+        <h3>By <%= book.author %></h3>
+        <div class="rating book-rating" data-rating="<%= book.rating %>">
+           
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+            
+        </div>
+    </div>
+</section>
+
+<section class="container3">
+    <h2 class="review-text">Review <span class="edit-review" onclick="handler('<%= book.id%>')">Edit</span></h2>
+    <p id="review<%= book.id %>"><%- review %></p> 
+
+    <form action="/edit" method="post">
+        <fieldset hidden id="fieldset">
+            <legend>Review Update</legend>
+        <input type="hidden" name="updatedItemId" value="<%= book.id %>">
+
+        <div class="title-rating">
+            <label class="title-box" hidden for="title<%= book.id %>">Title
+                <input hidden id="title<%= book.id %>" type="text" name="title" value="<%= book.title %>" placeholder="Book Title">
+            </label>
+
+            <label class="rating-box" hidden for="rating<%= book.id %>">Rating
+                <input hidden id="rating<%= book.id %>" type="number" min="1" max="5" name="rating" value="<%= book.rating %>">
+            </label>
+        </div>
+
+        <textarea class="edit-textarea" hidden name="review" id="text<%= book.id %>" cols="30" rows="10"><%= book.review %></textarea>
+        
+        <div class="form-others">
+            <label hidden for="isbn<%= book.id %>">ISBN
+                <input hidden id="isbn<%= book.id %>" type="text" name="isbn" value="<%= book.isbn %>" placeholder="ISBN">
+            </label>
+            
+            <label hidden for="genre<%= book.id %>">Genre
+                <input hidden id="genre<%= book.id %>" type="text" name="genre" value="<%= book.genre %>" placeholder="Genre">  
+            </label>
+            
+            <label hidden for="author<%= book.id %>">Author
+                <input hidden id="author<%= book.id %>" type="text" name="author" value="<%= book.author %>" placeholder="Author">
+            </label>
+            
+        </div>
+        
+        <input class="edit-button" hidden type="submit" id="button<%= book.id %>" value="Submit">
+    </fieldset>
+    </form>
+</section>
+
+<%- include('./partials/footer.ejs') %>
