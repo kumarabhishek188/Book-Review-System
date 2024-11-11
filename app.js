@@ -84,9 +84,9 @@ app.post("/new", async (req, res) => {
     const title = req.body.title;
     const author = req.body.author;
     const review = req.body.review;
-    const isbn = parseInt(req.body.isbn);
+    const isbn = req.body.isbn;
     const genre = req.body.genre;
-    const rating = parseInt(req.body.rating);
+    const rating = req.body.rating;
 
     try {
         const result = await db.query(`INSERT INTO items 
