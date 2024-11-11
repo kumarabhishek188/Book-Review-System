@@ -153,22 +153,28 @@ app.post("/sort", async (req, res) => {
 });
 
 app.post("/genre", async (req, res) => {
-    const genre = req.body.genre;
-    const genreTag = req.body.genreTag.toLowerCase();
+    const genreSearch = req.body.genre;
+    const genreTag = req.body.genreTag;
+
+    let genreInput = "";
+
+    if (genreTag && !genreSearch) {
+        genreInput = genreTag;
+    } else if (genreSearch && !genreTag) {
+        genreInput = genreSearch;
+    }
 
     try {
         const result = await db.query(`
             SELECT * FROM items
-            WHERE LOWER(genre) LIKE '%' || $1 || '%'
-                OR LOWER(genre) LIKE '%' || $2 || '%'`,
-            [genre, genreTag]
+            WHERE LOWER(genre) LIKE '%' || $1 || '%'`,
+            [genreInput.toLowerCase()]
         );
         res.render("genre.ejs", {
             book: result.rows,
             total: await bookCount(),
             totalResult: result.rows.length,
-            genre: genre,
-            genre: genreTag
+            genre: genreInput
         });
     } catch (err) {
         console.log(err);
