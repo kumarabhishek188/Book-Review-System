@@ -19,6 +19,20 @@
             <input type="hidden" name="genreTag" value="<%= book.genre %>">
         </form>
 
+        <script>
+            // Get the anchor and form elements
+            const postLink = document.getElementById('genre-tag');
+            const postForm = document.getElementById('tag-form');
+
+            // Add a click event listener to the anchor tag
+            postLink.addEventListener('click', function (event) {
+                event.preventDefault();  // Prevent the default anchor action (GET request)
+
+                // Submit the form with POST method
+                postForm.submit();  // This sends the POST request
+            });
+        </script>
+
         <h2><%= book.title %></h2>
         <h3>By <%= book.author %></h3>
         <div class="rating book-rating" data-rating="<%= book.rating %>">

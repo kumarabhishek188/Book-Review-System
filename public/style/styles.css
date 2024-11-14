@@ -58,11 +58,11 @@ ul {
 	gap: 10px;
 }
 .search form input {
-	width: 100%;
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid rgba(0, 0, 0, 0.288);
-	outline: none;
+    width: 100%;
+    padding: 10px 10px 10px 30px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.288);
+    outline: none;
 }
 
 select {
@@ -440,10 +440,10 @@ textarea {
 }
 
 .bi.bi-search {
-	position: relative;
-	top: 11px;
-	left: -25px;
-	color: #15151582;
+    position: relative;
+    top: 11px;
+    left: -203px;
+    color: #15151582;
 }
 
 #search-form {

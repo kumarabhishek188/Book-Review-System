@@ -46,7 +46,7 @@ function searchCheck(event) {
     const searchValue = document.getElementById("search-input").value.trim();
 
     if (searchValue === "") {
-        alert(`Your search entry is empty.`);
+        document.getElementById("search-input").style.border="2px solid red"
         event.preventDefault();  // Prevent the form from submitting
         return false;
     }
@@ -61,17 +61,4 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", function (event) {
         return searchCheck(event); // Pass the event to the searchCheck function
     });
-});
-
-
-// Get the anchor and form elements
-const postLink = document.getElementById('genre-tag');
-const postForm = document.getElementById('tag-form');
-
-// Add a click event listener to the anchor tag
-postLink.addEventListener('click', function (event) {
-    event.preventDefault();  // Prevent the default anchor action (GET request)
-
-    // Submit the form with POST method
-    postForm.submit();  // This sends the POST request
 });
