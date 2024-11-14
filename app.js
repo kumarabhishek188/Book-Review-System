@@ -1,17 +1,26 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+
 const db = new pg.Client({
-    user: "postgres",
-    host: "localhost",
-    database: "books",
-    password: "paeblo100",
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,  // This loads the DATABASE_URL from .env
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false  // Enable SSL only on Render (not locally)
 });
+
+// const db = new pg.Client({
+//     user: "postgres",
+//     host: "localhost",
+//     database: "books",
+//     password: "your-password",
+//     port: 5432,
+// });
 db.connect();
 
 app.use(express.static("public"));
