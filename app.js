@@ -12,9 +12,10 @@ const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes("render.com")
         ? { rejectUnauthorized: false }
-        : false  // Disable SSL if not required
+        : false  // Disable SSL if not required (this is for hosting on platforms like Render)
 });
 
+// ALTERNATIVE WAYT TO CONNECT TO THE DATABASE LOCALLY
 // const db = new pg.Client({
 //     user: "postgres",
 //     host: "localhost",
