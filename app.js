@@ -15,7 +15,7 @@ const db = new pg.Client({
         : false  // Disable SSL if not required (this is for hosting on platforms like Render)
 });
 
-// ALTERNATIVE WAYT TO CONNECT TO THE DATABASE LOCALLY
+// ALTERNATIVE WAY TO CONNECT TO THE DATABASE LOCALLY
 // const db = new pg.Client({
 //     user: "postgres",
 //     host: "localhost",
