@@ -57,11 +57,11 @@ ul {
 	gap: 10px;
 }
 .search form input {
-    width: 100%;
-    padding: 10px 10px 10px 30px;
-    border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0, 0.288);
-    outline: none;
+	width: 100%;
+	padding: 10px 10px 10px 30px;
+	border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.288);
+	outline: none;
 }
 
 select {
@@ -176,9 +176,9 @@ select {
 }
 
 .book-author {
-    text-align: center;
-    font-size: 15px;
-    padding: 0 20px;
+	text-align: center;
+	font-size: 15px;
+	padding: 0 20px;
 }
 
 footer {
@@ -272,7 +272,7 @@ textarea {
 	border-radius: 5px;
 	border: none;
 	font-weight: 500;
-    margin-left: 10px;
+	margin-left: 10px;
 }
 
 .container3 {
@@ -441,11 +441,10 @@ textarea {
 }
 
 .bi.bi-search {
-    position: relative;
-    top: 11px;
-    left: -203px;
-    color: #15151582;
-}
+	color: #15151582;
+	margin: 11px -35px -50px 0;
+	z-index: 10;
+  }
 
 #search-form {
 	display: flex;
@@ -488,12 +487,12 @@ textarea {
 }
 
 .contact {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 5px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 5px;
 }
 
 svg.bi.bi-linkedin {
-    margin: 0;
+	margin: 0;
 }
