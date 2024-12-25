@@ -2,11 +2,17 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import session, { Session } from "express-session";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import flash from "connect-flash";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+const saltRounds = 10;
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
@@ -15,16 +21,17 @@ const db = new pg.Client({
         : false  // Disable SSL if not required (this is for hosting on platforms like Render)
 });
 
-// ALTERNATIVE WAY TO CONNECT TO THE DATABASE LOCALLY
-// const db = new pg.Client({
-//     user: "postgres",
-//     host: "localhost",
-//     database: "books",
-//     password: "your-password",
-//     port: 5432,
-// });
-
 db.connect();
+
+app.use(session({
+    secret: "TOPSECRET",
+    resave: false,
+    saveUninitialized: true
+}));
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,7 +51,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/about", async (req, res) => {
-    res.render("about.ejs", { total: await bookCount() });
+    res.render("about.ejs", { total: await bookCount()});
 });
 
 app.get("/book/:id/:name", async (req, res) => {
@@ -61,6 +68,17 @@ app.get("/book/:id/:name", async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+});
+
+app.get("/register", async (req, res) => {
+    res.render("register.ejs", { total: await bookCount() });
+});
+
+app.get("/login", async (req, res) => {
+    res.render("login.ejs", {
+        message: req.flash('error'),
+        total: await bookCount()
+    });
 });
 
 app.post("/edit", async (req, res) => {
@@ -89,7 +107,11 @@ app.post("/edit", async (req, res) => {
 });
 
 app.get("/new-review", async (req, res) => {
-    res.render("new.ejs", { total: await bookCount() });
+    if (req.isAuthenticated()) {
+        res.render("new.ejs", { total: await bookCount() });
+    } else {
+        res.redirect("/login");
+    }
 });
 
 app.post("/new", async (req, res) => {
@@ -191,6 +213,91 @@ app.post("/genre", async (req, res) => {
     } catch (err) {
         console.log(err);
     }
+});
+
+app.post("/register", async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password
+    const firstName = req.body.first;
+    const lastName = req.body.last;
+
+    try {
+        const result = await db.query("SELECT email from users WHERE email = $1", [email]);
+        if (result.rows.length > 0) {
+            res.render("register.ejs", {
+                message: `Email already exists. Try <a href="/login">logging in</a>.`,
+                total: await bookCount()
+            });
+        } else {
+            bcrypt.hash(password, saltRounds, async (err, hash) => {
+                await db.query("INSERT INTO users (firstname, lastname, email, password) VALUES ($1, $2, $3, $4)",
+                    [firstName, lastName, email, hash]);
+            });
+            res.redirect("/login");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.post("/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            req.flash('error', info.message);
+            return res.redirect('/login');
+        }
+        req.login(user, (err) => {
+            if (err) return next(err);
+            username = user.firstname;
+            return res.redirect('/new-review');
+
+        });
+    })(req, res, next);
+});
+
+// app.post("/login", passport.authenticate("local",
+//     {
+//         successRedirect: "/new-review",
+//         failureRedirect: "/login"
+//     }
+// ));
+
+passport.use(new Strategy(async function verify(username, password, cb) {
+    try {
+        const result = await db.query("SELECT * FROM users where email = $1", [username]);
+
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            const hashedPassword = user.password;
+
+            // Password Check
+            bcrypt.compare(password, hashedPassword, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return cb(err);
+                } else {
+                    if (result) {
+                        return cb(null, user);
+                    } else {
+                        return cb(null, false, { message: "Wrong password, please try again." });
+                    }
+                }
+            });
+        } else {
+            return cb(null, false, { message: "User not found" });
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}));
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+});
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);
 });
 
 app.listen(port, () => {
