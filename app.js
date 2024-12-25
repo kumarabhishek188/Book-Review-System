@@ -249,7 +249,6 @@ app.post("/login", (req, res, next) => {
         }
         req.login(user, (err) => {
             if (err) return next(err);
-            username = user.firstname;
             return res.redirect('/new-review');
 
         });
