@@ -52,6 +52,14 @@ This is a web application that allows users to review books, browse reviews, and
       review TEXT,
       rating INT
    );
+
+   CREATE TABLE users (
+      id SERIAL PRIMARY KEY,
+      firstname VARCHAR(45),
+      lastname VARCHAR(45),
+      email VARCHAR(45) UNIQUE NOT NUL,
+      password VARCHAR(100),
+   );
    ```
 
 4. **Add Environment Variables**:
