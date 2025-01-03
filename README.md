@@ -39,7 +39,7 @@ This is a web application that allows users to review books, browse reviews, and
 
    - Create a new PostgreSQL database named `books`.
    - Create a table called `items` with columns for book information (ISBN, title, author, genre, review, and rating).
-   - Create a table called `users` with columns for user data (first name, last name, email, and password).
+   - Create a table called `users` with columns for user data (first name, last name, email, password, and photo).
 
    Example SQL command for table creation:
 
@@ -60,6 +60,7 @@ This is a web application that allows users to review books, browse reviews, and
       lastname VARCHAR(45),
       email VARCHAR(45) UNIQUE NOT NUL,
       password VARCHAR(100),
+      photo TEXT
    );
    ```
 
