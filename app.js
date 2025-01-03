@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const saltRounds = 10;
-const callBackURL = "http://localhost:3000/auth/google/new" || "https://thynk-book.onrender.com/auth/google/new";
+const callBackURL = process.env.CALLBACK_URL || "http://localhost:3000/auth/google/new";
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
