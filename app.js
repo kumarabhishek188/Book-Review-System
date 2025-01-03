@@ -7,6 +7,7 @@ import session, { Session } from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import flash from "connect-flash";
+import GoogleStrategy from "passport-google-oauth2";
 
 dotenv.config();
 
@@ -44,14 +45,14 @@ async function bookCount() {
 app.get("/", async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM items ORDER BY id ASC");
-        res.render("index.ejs", { book: result.rows, total: await bookCount() });
+        res.render("index.ejs", { book: result.rows, total: await bookCount(), user: req.user });
     } catch (error) {
         console.error(error);
     }
 });
 
 app.get("/about", async (req, res) => {
-    res.render("about.ejs", { total: await bookCount()});
+    res.render("about.ejs", { total: await bookCount(), user: req.user });
 });
 
 app.get("/book/:id/:name", async (req, res) => {
@@ -63,7 +64,8 @@ app.get("/book/:id/:name", async (req, res) => {
         res.render("review.ejs", {
             book: result.rows[0],
             review: reviewText,
-            total: await bookCount()
+            total: await bookCount(),
+            user: req.user
         });
     } catch (err) {
         console.log(err);
@@ -77,7 +79,24 @@ app.get("/register", async (req, res) => {
 app.get("/login", async (req, res) => {
     res.render("login.ejs", {
         message: req.flash('error'),
-        total: await bookCount()
+        total: await bookCount(),
+        user: req.user
+    });
+});
+
+app.get("/auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"]
+}));
+
+app.get("/auth/google/new", passport.authenticate("google", {
+    successRedirect: "/new-review",
+    failureRedirect: "/login"
+}));
+
+app.get("/logout", (req, res) => {
+    req.logout((err) => {
+        if (err) console.log(err);
+        res.redirect("/login");
     });
 });
 
@@ -108,7 +127,7 @@ app.post("/edit", async (req, res) => {
 
 app.get("/new-review", async (req, res) => {
     if (req.isAuthenticated()) {
-        res.render("new.ejs", { total: await bookCount() });
+        res.render("new.ejs", { total: await bookCount(), user: req.user });
     } else {
         res.redirect("/login");
     }
@@ -151,7 +170,8 @@ app.post("/s", async (req, res) => {
             book: result.rows,
             total: await bookCount(),
             totalResult: result.rows.length,
-            searchTerm: keywordTitleCase
+            searchTerm: keywordTitleCase,
+            user: req.user
         });
     } catch (err) {
         console.log(err);
@@ -169,7 +189,8 @@ app.post("/sort", async (req, res) => {
                 book: result.rows,
                 total: await bookCount(),
                 totalResult: result.rows.length,
-                sortValue: sortValue
+                sortValue: sortValue,
+                user: req.user
             });
         } else {
             const result = await db.query(`
@@ -178,7 +199,8 @@ app.post("/sort", async (req, res) => {
                 book: result.rows,
                 total: await bookCount(),
                 totalResult: result.rows.length,
-                sortValue: sortValue
+                sortValue: sortValue,
+                user: req.user
             });
         }
     } catch (err) {
@@ -208,7 +230,8 @@ app.post("/genre", async (req, res) => {
             book: result.rows,
             total: await bookCount(),
             totalResult: result.rows.length,
-            genre: genreInput
+            genre: genreInput,
+            user: req.user
         });
     } catch (err) {
         console.log(err);
@@ -255,41 +278,62 @@ app.post("/login", (req, res, next) => {
     })(req, res, next);
 });
 
-// app.post("/login", passport.authenticate("local",
-//     {
-//         successRedirect: "/new-review",
-//         failureRedirect: "/login"
-//     }
-// ));
-
-passport.use(new Strategy(async function verify(username, password, cb) {
-    try {
-        const result = await db.query("SELECT * FROM users where email = $1", [username]);
-
-        if (result.rows.length > 0) {
-            const user = result.rows[0];
-            const hashedPassword = user.password;
-
-            // Password Check
-            bcrypt.compare(password, hashedPassword, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    return cb(err);
-                } else {
-                    if (result) {
-                        return cb(null, user);
-                    } else {
-                        return cb(null, false, { message: "Wrong password, please try again." });
-                    }
-                }
-            });
-        } else {
-            return cb(null, false, { message: "User not found" });
+passport.use(
+    "google",
+    new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/google/new",
+        userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    }, async (accessToken, refreshToken, profile, cb) => {
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [profile.email]);
+            if (result.rows.length === 0) {
+                const user = await db.query(`INSERT INTO users (firstname, lastname, email, password, photo) 
+                VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+                    [profile._json.given_name, profile._json.family_name, profile.email, "google-auth", profile._json.picture]
+                );
+                const userData = user.rows[0];
+                return cb(null, userData);
+            } else {
+                return cb(null, result.rows[0]);
+            }
+        } catch (err) {
+            console.log(err);
         }
-    } catch (err) {
-        console.log(err);
-    }
-}));
+    })
+);
+
+passport.use(
+    "local",
+    new Strategy(async function verify(username, password, cb) {
+        try {
+            const result = await db.query("SELECT * FROM users where email = $1", [username]);
+
+            if (result.rows.length > 0) {
+                const user = result.rows[0];
+                const hashedPassword = user.password;
+
+                // Password Check
+                bcrypt.compare(password, hashedPassword, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        return cb(err);
+                    } else {
+                        if (result) {
+                            return cb(null, user);
+                        } else {
+                            return cb(null, false, { message: "Wrong password, please try again." });
+                        }
+                    }
+                });
+            } else {
+                return cb(null, false, { message: "User not found" });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }));
 
 passport.serializeUser((user, cb) => {
     cb(null, user);

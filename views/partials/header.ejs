@@ -17,7 +17,20 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/new-review">Review a Book</a></li>
-                <li><a href="/login">Login</a></li>
+                <li id="login"><a href="/login">Login</a></li>
+                
+                <% if (locals.user) { %>
+                    <li id="logout"><a href="/logout">Logout</a></li>
+
+                    <script>
+                        document.getElementById("login").style.display="none";
+                    </script>
+
+                    <% if (user.photo) { %>
+                        <li><img class="profile-photo" src="<%= user.photo %>" alt="profle picture"></li>
+                    <% } %>
+
+                <% } %> 
             </ul>
         </div>
 

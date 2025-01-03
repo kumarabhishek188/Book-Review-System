@@ -538,6 +538,37 @@ svg.bi.bi-linkedin {
 }
 
 .login-register form > div {
-    color: #e73a3a;
-    font-style: italic;
+	color: #e73a3a;
+	font-style: italic;
+}
+
+/* Login with Google */
+.google {
+	padding: 10px 20px;
+	display: flex;
+	gap: 10px;
+	font-family: "Poppins";
+	justify-content: center;
+	align-items: center;
+	background-color: #ffffff;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-decoration: none;
+	color: black
+}
+
+.google:hover{
+	background-color: #975102;
+	color: white;
+	cursor: pointer;
+	border: 1px solid #975102;
+}
+
+.google:hover img {
+	filter: brightness(0) invert(1);
+}
+
+img.profile-photo {
+    width: 40px;
+    border-radius: 50%;
 }
