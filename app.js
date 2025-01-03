@@ -14,6 +14,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const saltRounds = 10;
+const callBackURL = "http://localhost:3000/auth/google/new" || "https://thynk-book.onrender.com/auth/google/new";
 
 const db = new pg.Client({
     connectionString: process.env.DATABASE_URL,
@@ -283,7 +284,7 @@ passport.use(
     new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/google/new",
+        callbackURL: callBackURL,
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     }, async (accessToken, refreshToken, profile, cb) => {
         try {
