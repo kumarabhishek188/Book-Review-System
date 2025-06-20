@@ -1,6 +1,6 @@
 # Book Review Website
 
-This is a web application that allows users to review books, browse reviews, and read about different books. Users can search, sort, and filter books by genre and other criteria. The application is built using **Node.js**, **Express**, **EJS** templating, and **PostgreSQL** as the database. (https://thynk-book.onrender.com)
+This is a web application that allows users to review books, browse reviews, and read about different books. Users can search, sort, and filter books by genre and other criteria. The application is built using **Node.js**, **Express**, **EJS** templating, and **PostgreSQL** as the database.
 
 ## Features
 
@@ -25,8 +25,7 @@ This is a web application that allows users to review books, browse reviews, and
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/Novavamp/book-review-website
-   cd book-review-website
+   git clone
    ```
 
 2. **Install dependencies**:
@@ -69,7 +68,7 @@ This is a web application that allows users to review books, browse reviews, and
    Create a `.env` file in the root directory with the following content (replace the placeholder with actual credentials):
 
    ```plaintext
-   DATABASE_URL=postgres://postgres:your-password@localhost:5432/books
+   DATABASE_URL=postgres://abhishekkumar@localhost:5432/book_review_db
    ```
 
 5. **Start the Server**:
