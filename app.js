@@ -25,6 +25,7 @@ const db = new pg.Client({
 
 db.connect();
 
+
 app.use(session({
     secret: "TOPSECRET",
     resave: false,
